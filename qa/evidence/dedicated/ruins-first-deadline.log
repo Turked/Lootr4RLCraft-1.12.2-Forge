@@ -1,0 +1,4 @@
+[01:48:22] [Server thread/INFO] [lootr-server-probe]: GENERATED towers=25 chests=175 using installed Ruins; wait at least 40 server ticks then use lootrqa sample
+[01:48:44] [Server thread/INFO] [lootr-server-probe]: SAMPLE total=175 registered=161 lockedDenied=8 otherUnavailable=0 threeIndependentActors=153 failed=14
+java.lang.IllegalStateException: Acceptance threshold missed; consult server log
+[01:48:44] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer]: Probe failed: java.lang.IllegalStateException: Acceptance threshold missed; consult server log

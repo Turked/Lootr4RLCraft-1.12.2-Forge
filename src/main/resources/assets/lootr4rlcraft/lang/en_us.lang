@@ -1,0 +1,5 @@
+message.lootr4rlcraft.unavailable=This private loot chest cannot be opened right now.
+container.lootr4rlcraft.chest=lootr
+container.lootr4rlcraft.double_chest=lootr
+hud.lootr4rlcraft.unopened=Lootr · Unopened
+hud.lootr4rlcraft.opened=Lootr · Opened

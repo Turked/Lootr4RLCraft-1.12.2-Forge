@@ -1,0 +1,18 @@
+{
+  "pools": [
+    {
+      "name": "guaranteed_enchanted_gear",
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "minecraft:diamond_sword",
+          "weight": 1,
+          "functions": [
+            { "function": "enchant_with_levels", "levels": { "min": 15, "max": 30 } }
+          ]
+        }
+      ]
+    }
+  ]
+}

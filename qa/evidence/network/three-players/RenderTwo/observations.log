@@ -1,0 +1,9 @@
+[12:20:04] [Client thread/INFO] [net.minecraft.client.gui.GuiNewChat]: [CHAT] Teleported RenderTwo to 72.5, 160.0, 69.2
+[12:20:08] [Client thread/INFO] [LootrMultiplayerProbe]: Camera 72.5 160.0 69.2, HUD [Lootr · Unopened], Saved screenshot as RenderTwo-unopened.png
+[12:20:08] [Client thread/INFO] [LootrMultiplayerProbe]: RenderTwo ready Lootr · Unopened
+[12:20:13] [Client thread/INFO] [LootrMultiplayerProbe]: Camera 72.5 160.0 69.2, HUD [Lootr · Unopened], Saved screenshot as RenderTwo-other-player-opened.png
+[12:20:14] [Client thread/INFO] [LootrMultiplayerProbe]: Camera 72.5 160.0 69.2, HUD [Lootr · Opened], Saved screenshot as RenderTwo-first-inventory.png
+[12:20:14] [Client thread/INFO] [LootrMultiplayerProbe]: RenderTwo menu initial slot 0 = 3
+[12:20:16] [Client thread/INFO] [LootrMultiplayerProbe]: RenderTwo changed remaining 1, player inventory 2
+[12:20:18] [Client thread/INFO] [LootrMultiplayerProbe]: Camera 72.5 160.0 69.2, HUD [Lootr · Opened], Saved screenshot as RenderTwo-opened.png
+[12:20:18] [Client thread/INFO] [net.minecraft.client.gui.GuiNewChat]: [CHAT] Teleported RenderTwo to 360.5, 160.0, 72.5

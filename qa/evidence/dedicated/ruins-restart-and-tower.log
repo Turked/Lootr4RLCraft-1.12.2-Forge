@@ -1,0 +1,6 @@
+[12:16:42] [Server thread/INFO] [lootr-server-probe]: RESTART total=175 registered=175 lockedDenied=11 otherUnavailable=0 threeIndependentActors=164 failed=0
+[12:19:52] [Server thread/INFO] [net.minecraft.server.management.PlayerList]: RenderOne[/127.0.0.1:59903] logged in with entity id 707 at (2329.5, 87.0, -9188.5)
+[12:19:54] [Server thread/INFO] [net.minecraft.server.management.PlayerList]: RenderThree[/127.0.0.1:60037] logged in with entity id 708 at (1878.5, 31.0, -4755.5)
+[12:19:55] [Server thread/INFO] [net.minecraft.server.management.PlayerList]: RenderTwo[/127.0.0.1:60038] logged in with entity id 709 at (9713.5, 128.0, -7865.5)
+[22:33:07] [Server thread/INFO] [lootr-natural-probe]: NATURAL PASS requestedChunks=6 eligibleHalves=20 managedHalves=20 lockPhaseReady=20 distinctGroups=10 example=BlockPos{x=807, y=70, z=203}
+[22:35:47] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer]: Flushing completed

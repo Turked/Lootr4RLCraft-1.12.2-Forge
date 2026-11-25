@@ -1,0 +1,11 @@
+Verified both native player/container save orders, first-open rollback, legacy baselines and cursor recovery
+Verified minecart provenance gate, table and fixed sources, three private windows, movement, private NBT and record reload
+Verified 100/100 newly generated native bonus chests, seeded loot, two private menus and on-disk NBT round trips
+Verified 100 vanilla chest fixtures with three concurrent players, persisted legacy generic records, and native machine exclusion
+Verified generic native Mimic first-roll reuse, automation buffers, removed parts and duplicate completion protection
+Verified delayed Locks phases, unchanged physical loot, paired readiness, mutation refusal and saved enrollment recovery
+Verified generation across a 211 by 171 area, replaced tiles, cascading disk loads and ordinary storage exclusion
+Verified native world generation, conversion commands, chest menus, loot tables and saved player inventories
+[06:53:58] [main/INFO] [FML]: Unloading dimension 0
+BUILD SUCCESSFUL in 12s
+4 actionable tasks: 2 executed, 2 up-to-date

@@ -1,0 +1,17 @@
+[06:54:04] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer]: Done (40.881s)! For help, type "help" or "?"
+[06:54:11] [Server thread/INFO] [lootr-server-probe]: GENERATED towers=25 chests=175 using installed Ruins; wait at least 40 server ticks then use lootrqa sample
+[12:13:18] [Server thread/INFO] [lootr-server-probe]: STATUS quiet snapshot total=175 loaded=175 managed=175 sampled=false
+[12:13:27] [Server thread/INFO] [lootr-server-probe]: SAMPLE total=175 registered=175 lockedDenied=11 otherUnavailable=0 threeIndependentActors=164 failed=0
+[12:13:28] [Server thread/INFO] [lootr-server-probe]: COMPAT PASS actual RLArtifacts forced winning click and break, no inventory on replacement, native losing first click and second player under forced winning odds
+[12:13:28] [Server thread/INFO] [lootr-server-probe]: COMPAT PASS minecraft:chest pair=false locked denial, key, relock, native pick-menu pin sequence and private reopen
+[12:13:28] [Server thread/INFO] [lootr-server-probe]: COMPAT PASS minecraft:chest pair=true locked denial, key, relock, native pick-menu pin sequence and private reopen
+[12:13:28] [Server thread/INFO] [lootr-server-probe]: COMPAT PASS minecraft:trapped_chest pair=false locked denial, key, relock, native pick-menu pin sequence and private reopen
+[12:13:28] [Server thread/INFO] [lootr-server-probe]: COMPAT PASS quark:custom_chest pair=false locked denial, key, relock, native pick-menu pin sequence and private reopen
+[12:13:28] [Server thread/INFO] [lootr-server-probe]: COMPAT PASS rustic:cabinet pair=false locked denial, key, relock, native pick-menu pin sequence and private reopen
+[12:13:28] [Server thread/INFO] [lootr-server-probe]: COMPAT PASS rustic:barrel pair=false locked denial, key, relock, native pick-menu pin sequence and private reopen
+[12:13:28] [Server thread/INFO] [lootr-server-probe]: COMPAT PASS charm:barrel pair=false locked denial, key, relock, native pick-menu pin sequence and private reopen
+[12:13:28] [Server thread/INFO] [lootr-server-probe]: COMPAT PASS variedcommodities:barrel pair=false locked denial, key, relock, native pick-menu pin sequence and private reopen
+[12:13:47] [Server thread/WARN] [lootr-natural-probe]: NO SAMPLE: no eligible Battle Towers chest constructed by the installed generator in these regions
+[12:14:35] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer]: Flushing completed
+[12:14:35] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Stopping server
+[12:14:35] [Server Shutdown Thread/INFO] [net.minecraft.server.MinecraftServer]: Stopping server

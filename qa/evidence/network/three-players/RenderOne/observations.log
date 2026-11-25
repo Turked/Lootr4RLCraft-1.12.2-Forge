@@ -1,0 +1,8 @@
+[12:20:02] [Client thread/INFO] [net.minecraft.client.gui.GuiNewChat]: [CHAT] Teleported RenderOne to 71.2, 160.0, 69.2
+[12:20:06] [Client thread/INFO] [LootrMultiplayerProbe]: Camera 71.2 160.0 69.2, HUD [Lootr · Unopened], Saved screenshot as RenderOne-unopened.png
+[12:20:06] [Client thread/INFO] [LootrMultiplayerProbe]: RenderOne ready Lootr · Unopened
+[12:20:12] [Client thread/INFO] [LootrMultiplayerProbe]: Camera 71.2 160.0 69.2, HUD [Lootr · Opened], Saved screenshot as RenderOne-first-inventory.png
+[12:20:12] [Client thread/INFO] [LootrMultiplayerProbe]: RenderOne menu initial slot 0 = 3
+[12:20:16] [Client thread/INFO] [LootrMultiplayerProbe]: RenderOne changed remaining 2, player inventory 1
+[12:20:18] [Client thread/INFO] [LootrMultiplayerProbe]: Camera 71.2 160.0 69.2, HUD [Lootr · Opened], Saved screenshot as RenderOne-opened.png
+[12:20:18] [Client thread/INFO] [net.minecraft.client.gui.GuiNewChat]: [CHAT] Teleported RenderOne to 360.5, 160.0, 72.5

@@ -1,0 +1,9 @@
+[12:20:06] [Client thread/INFO] [net.minecraft.client.gui.GuiNewChat]: [CHAT] Teleported RenderThree to 73.8, 160.0, 69.2
+[12:20:11] [Client thread/INFO] [LootrMultiplayerProbe]: Camera 73.8 160.0 69.2, HUD [Lootr · Unopened], Saved screenshot as RenderThree-unopened.png
+[12:20:11] [Client thread/INFO] [LootrMultiplayerProbe]: RenderThree ready Lootr · Unopened
+[12:20:13] [Client thread/INFO] [LootrMultiplayerProbe]: Camera 73.8 160.0 69.2, HUD [Lootr · Unopened], Saved screenshot as RenderThree-other-player-opened.png
+[12:20:14] [Client thread/INFO] [LootrMultiplayerProbe]: Camera 73.8 160.0 69.2, HUD [Lootr · Opened], Saved screenshot as RenderThree-first-inventory.png
+[12:20:14] [Client thread/INFO] [LootrMultiplayerProbe]: RenderThree menu initial slot 0 = 3
+[12:20:16] [Client thread/INFO] [LootrMultiplayerProbe]: RenderThree changed remaining 0, player inventory 3
+[12:20:18] [Client thread/INFO] [LootrMultiplayerProbe]: Camera 73.8 160.0 69.2, HUD [Lootr · Opened], Saved screenshot as RenderThree-opened.png
+[12:20:18] [Client thread/INFO] [net.minecraft.client.gui.GuiNewChat]: [CHAT] Teleported RenderThree to 360.5, 160.0, 72.5

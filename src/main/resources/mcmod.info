@@ -1,0 +1,11 @@
+[
+  {
+    "modid": "lootr4rlcraft",
+    "name": "Lootr4RLCraft",
+    "description": "Separate loot inventories for players exploring structures together.",
+    "version": "${version}",
+    "mcversion": "1.12.2",
+    "authorList": ["MechGaming"],
+    "credits": "Independent project. Unaffiliated with the creators of Lootr, RLCraft, and Minecraft."
+  }
+]

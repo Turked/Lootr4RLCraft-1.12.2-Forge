@@ -1,0 +1,145 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net/' }
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:3.0.197'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle'
+
+group = 'com.mechgaming.lootr4rlcraft'
+version = '0.2.0-dev'
+archivesBaseName = 'Lootr4RLCraft'
+sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
+
+minecraft {
+    mappings channel: 'snapshot', version: '20171003-1.12'
+    runs {
+        client {
+            workingDirectory project.file('run/client')
+        }
+        server {
+            workingDirectory project.file('run/server')
+        }
+    }
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.12.2-14.23.5.2860'
+}
+
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('mcmod.info') {
+        expand version: project.version
+    }
+}
+
+jar {
+    from(files('LICENSE', 'THIRD_PARTY_NOTICES.md', 'ASSET_PROVENANCE.md')) {
+        into 'META-INF'
+    }
+}
+
+jar.finalizedBy('reobfJar')
+
+task lootStorageTest(type: JavaExec, dependsOn: testClasses) {
+    classpath = sourceSets.test.runtimeClasspath
+    main = 'com.mechgaming.lootr4rlcraft.loot.ChestLootDataTest'
+}
+
+check.dependsOn lootStorageTest
+
+task chestIntegrationTest(type: JavaExec, dependsOn: testClasses) {
+    classpath = sourceSets.test.runtimeClasspath
+    main = 'com.mechgaming.lootr4rlcraft.integration.NativeChestIntegrationTest'
+}
+
+check.dependsOn chestIntegrationTest
+
+tasks.register('push-to-modpack') {
+    group = 'deployment'
+    description = 'Build Lootr4RLCraft and copy the JAR to a modpack.'
+    dependsOn 'build', 'reobfJar'
+
+    doLast {
+        def profilePath = project.findProperty('modpackDir')
+        if (!profilePath) {
+            throw new GradleException('Pass -PmodpackDir with the path to your modpack profile.')
+        }
+
+        def modsDir = new File(project.file(profilePath), 'mods')
+        if (!modsDir.isDirectory()) {
+            throw new GradleException("Mods folder not found: ${modsDir}")
+        }
+
+        def modJar = project.tasks.named('jar').get().archiveFile.get().asFile
+        def backups = new File(modsDir.parentFile, 'lootr4rlcraft-backups').toPath()
+        java.nio.file.Files.createDirectories(backups)
+        new RandomAccessFile(backups.resolve('deploy.lock').toFile(), 'rw').withCloseable { handle ->
+            def lock = handle.channel.tryLock()
+            if (!lock) throw new GradleException('Another Lootr4RLCraft installation is in progress.')
+            try {
+                def existing = modsDir.listFiles().findAll { it.name ==~ /(?i)lootr4rlcraft(?:-.*)?\.jar/ }
+                existing.each { older ->
+                    if (!older.isFile() || java.nio.file.Files.isSymbolicLink(older.toPath())) {
+                        throw new GradleException("Inspect unexpected entry ${older} before installing.")
+                    }
+                    new java.util.zip.ZipFile(older).withCloseable { zip ->
+                        def info = zip.getEntry('mcmod.info')
+                        def ids = info == null ? [] : new groovy.json.JsonSlurper().parse(zip.getInputStream(info))*.modid
+                        if (ids != ['lootr4rlcraft']) throw new GradleException("Unrecognized mod metadata in ${older}.")
+                    }
+                }
+                def target = new File(modsDir, modJar.name).toPath()
+                def staged = java.nio.file.Files.createTempFile(modsDir.toPath(), '.lootr4rlcraft-', '.pending')
+                def moved = [:]
+                try {
+                    java.nio.file.Files.copy(modJar.toPath(), staged, java.nio.file.StandardCopyOption.REPLACE_EXISTING)
+                    if (existing) {
+                        def backup = java.nio.file.Files.createTempDirectory(backups, 'previous-')
+                        existing.each { older ->
+                            def dest = backup.resolve(older.name)
+                            java.nio.file.Files.move(older.toPath(), dest, java.nio.file.StandardCopyOption.ATOMIC_MOVE)
+                            moved[older.toPath()] = dest
+                        }
+                        logger.lifecycle("Previous development JARs backed up to ${backup}")
+                    }
+                    java.nio.file.Files.move(staged, target, java.nio.file.StandardCopyOption.ATOMIC_MOVE)
+                } catch (Exception failure) {
+                    moved.each { original, backup ->
+                        try { java.nio.file.Files.move(backup, original) }
+                        catch (Exception restore) { failure.addSuppressed(restore) }
+                    }
+                    throw failure
+                } finally {
+                    java.nio.file.Files.deleteIfExists(staged)
+                }
+                logger.lifecycle("Installed ${target}")
+            } finally { lock.release() }
+        }
+    }
+}
+// A separate test mod drives the actual Forge client in a disposable RLCraft profile.
+task clientProbeJar(type: Jar, dependsOn: testClasses) {
+    from(sourceSets.test.output) { include 'com/mechgaming/lootr4rlcraft/qa/**' }
+    archiveBaseName.set('LootrRenderProbe')
+    destinationDirectory.set(file("$buildDir/qa-client/probe"))
+}
+reobf { clientProbeJar {} }
+
+// Test-only console fixture for an isolated RLCraft dedicated server.
+sourceSets {
+    serverProbe {
+        compileClasspath = sourceSets.main.output + sourceSets.main.compileClasspath
+    }
+}
+task serverProbeJar(type: Jar, dependsOn: serverProbeClasses) {
+    from sourceSets.serverProbe.output
+    archiveBaseName.set('LootrServerProbe')
+    destinationDirectory.set(file("$buildDir/qa-server/probe"))
+}
+reobf { serverProbeJar {} }

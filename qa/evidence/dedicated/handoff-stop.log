@@ -1,0 +1,6 @@
+[06:51:47] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer]: Done (6.215s)! For help, type "help" or "?"
+[10:48:56] [Server thread/INFO] [net.minecraft.server.dedicated.DedicatedServer]: Saved the world
+[10:48:56] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Stopping server
+[10:48:56] [Server thread/INFO] [net.minecraft.server.MinecraftServer]: Saving chunks for level 'CandidateWorld2'/overworld
+[10:48:56] [Server thread/INFO] [FML]: Unloading dimension 0
+[10:48:56] [Server Shutdown Thread/INFO] [net.minecraft.server.MinecraftServer]: Stopping server

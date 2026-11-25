@@ -1,0 +1,6 @@
+[22:37:14] [Server thread/INFO] [minecraft/DedicatedServer]: Done (32.430s)! For help, type "help" or "?"
+[22:37:17] [Server thread/INFO] [lootr-crash-probe]: CRASH_PRIMED
+java.lang.IllegalStateException: Locks not ready for baseline
+[22:37:20] [Server thread/INFO] [minecraft/DedicatedServer]: Probe failed: java.lang.IllegalStateException: Locks not ready for baseline
+[22:37:20] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[22:37:22] [Server Shutdown Thread/INFO] [minecraft/MinecraftServer]: Stopping server
