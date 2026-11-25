@@ -72,10 +72,12 @@ def main():
         parser.error("Choose a new destination; existing trials carry their own worlds and evidence")
     if digest(args.pack) != PACK_SHA:
         parser.error("Expected RLCraft 2.9.3 server pack file 4612990 (see qa/SERVER_SETUP.md)")
-    forge = next((path for path in args.forge_home.glob("*.jar")
+    # Normalize relative inputs before descending into Forge's deeply nested Maven layout on Windows.
+    forge_home = args.forge_home.resolve(strict=True)
+    forge = next((path for path in forge_home.glob("*.jar")
                  if path.stat().st_size == 4466148 and digest(path) == FORGE_SHA), None)
-    minecraft = args.forge_home / "minecraft_server.1.12.2.jar"
-    libraries = args.forge_home / "libraries"
+    minecraft = forge_home / "minecraft_server.1.12.2.jar"
+    libraries = forge_home / "libraries"
     if not forge or not libraries.is_dir() or not minecraft.is_file() or digest(minecraft) != MC_SHA:
         parser.error("Choose a completed Forge 14.23.5.2860 server installation with Minecraft 1.12.2 and libraries")
     additions = [args.product, args.probe] + args.addon

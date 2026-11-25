@@ -1,0 +1,66 @@
+// Optional headless test against classes from the developer's own RLCraft 2.9.3 installation.
+// Invoke as an init script with -I qa/installed-adapters.gradle. The product has no extra dependency.
+gradle.projectsEvaluated {
+    def project = gradle.rootProject
+    def names = ['AutoRegLib-1.3-32.jar', 'Charm-1.12.2-1.4.1.jar', 'Quark-r1.6-179.jar',
+                 'rustic-1.1.7.jar', 'VariedCommodities_1.12.2-(31Mar23).jar']
+    def profile = project.findProperty('modpackDir')
+    if (!profile) throw new GradleException('Pass -PmodpackDir with the RLCraft 2.9.3 profile directory.')
+    def raw = names.collect { new File(project.file(profile), "mods/${it}") }
+    def stage = new File(project.buildDir, 'qa-installed')
+    def mapped = new File(stage, 'mapped')
+    project.repositories.maven {
+        url = 'https://maven.neoforged.net/releases/'
+        content { includeModule 'net.neoforged', 'AutoRenamingTool' }
+    }
+    def remapper = project.configurations.detachedConfiguration(
+        project.dependencies.create('net.neoforged:AutoRenamingTool:2.0.3:all@jar'))
+    def mappingsTask = project.tasks.named('createMcpToSrg')
+    def prep = project.tasks.register('mapInstalledAdapters') {
+        dependsOn mappingsTask
+        inputs.files(raw, remapper, project.sourceSets.main.compileClasspath, mappingsTask)
+        outputs.dir(mapped)
+        doLast {
+            def tool = remapper.singleFile
+            def hash = java.security.MessageDigest.getInstance('SHA-256').digest(tool.bytes).encodeHex().toString()
+            if (hash != '43fcb978664ba04fc0b3b1b1a14eccabb4bc87b7a415e0eb8bdd1c2f12324321') {
+                throw new GradleException('Unexpected AutoRenamingTool binary.')
+            }
+            def missing = raw.findAll { !it.isFile() }
+            if (missing) throw new GradleException("Missing installed mods: ${missing}")
+            def forgeJar = project.sourceSets.main.compileClasspath.filter {
+                it.name.startsWith('forge-1.12.2-14.23.5.2860_mapped_') && it.name.endsWith('.jar')
+            }.singleFile
+            def namesFile = mappingsTask.get().outputs.files.singleFile
+            mapped.mkdirs()
+            def forgeSrg = new File(stage, 'forge-srg.jar')
+            def runTool = { String logName, List arguments ->
+                def log = new File(stage, logName)
+                def result = log.withOutputStream { output ->
+                    project.javaexec {
+                        classpath = project.files(tool)
+                        main = 'net.neoforged.art.Main'
+                        args arguments
+                        standardOutput = output
+                        errorOutput = output
+                        ignoreExitValue = true
+                    }
+                }
+                if (result.exitValue) throw new GradleException("Remapping failed. See ${log}")
+            }
+            runTool('forge-remap.log', ['--input', forgeJar, '--output', forgeSrg, '--map', namesFile])
+            def libs = ([forgeSrg] + raw).collectMany { ['--lib', it] }
+            raw.each { input ->
+                runTool("${input.name}.log", ['--input', input, '--output', new File(mapped, input.name),
+                                              '--map', namesFile, '--reverse'] + libs)
+            }
+        }
+    }
+    project.tasks.register('installedAdapterTest', JavaExec) {
+        dependsOn prep, project.tasks.named('testClasses')
+        classpath = project.sourceSets.test.runtimeClasspath + project.files(names.collect { new File(mapped, it) })
+        main = 'com.mechgaming.lootr4rlcraft.integration.NativeChestIntegrationTest'
+        systemProperty 'lootr4rlcraft.testInstalledContainers', 'true'
+        systemProperty 'lootr4rlcraft.testInstalledPairs', 'true'
+    }
+}

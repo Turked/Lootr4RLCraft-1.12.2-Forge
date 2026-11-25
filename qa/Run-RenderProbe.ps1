@@ -35,8 +35,13 @@ function Get-ProbeArtifact($explicit, $directory, $pattern, $hash) {
 $candidate = Get-ProbeArtifact $CandidateJar (Join-Path $project 'build/libs') 'Lootr4RLCraft-*.jar' $ExpectedCandidate
 $probe = Get-ProbeArtifact $ProbeJar (Join-Path $stage 'probe') 'LootrRenderProbe-*.jar' $ExpectedProbe
 $profileMetadata = Get-Content -LiteralPath (Join-Path $ProfilePath 'minecraftinstance.json') -Raw | ConvertFrom-Json
-$manifest = Get-Content -LiteralPath (Join-Path $ProfilePath 'manifest.json') -Raw | ConvertFrom-Json
-if ($manifest.version -ne '2.9.3' -or $profileMetadata.baseModLoader.name -ne 'forge-14.23.5.2860') {
+$manifestPath = Join-Path $ProfilePath 'manifest.json'
+$manifest = if (Test-Path -LiteralPath $manifestPath -PathType Leaf) {
+    Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
+} else {
+    $profileMetadata.manifest
+}
+if ($manifest.version -ne '2.9.3' -or !$manifest.files -or $profileMetadata.baseModLoader.name -ne 'forge-14.23.5.2860') {
     throw 'This probe targets the RLCraft 2.9.3 CurseForge profile on Forge 14.23.5.2860.'
 }
 if ($PreparedGame) {

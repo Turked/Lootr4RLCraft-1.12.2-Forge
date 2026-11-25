@@ -44,9 +44,11 @@ Get-FileHash build/qa-client/probe/LootrRenderProbe-0.2.0-dev.jar
 Get-FileHash build/qa-server/probe/LootrServerProbe-0.2.0-dev.jar
 ```
 
-For a specific regression, run `.\gradlew.bat lootStorageTest` or `.\gradlew.bat chestIntegrationTest`. For the Forge development sandbox, the Gradle tasks are `runClient` and `runServer`. `genIntellijRuns` generates IDE run configurations and requests Minecraft assets. Those development runs use `run/client` and `run/server` and exercise a different environment from the full RLCraft tests. Each fully qualified result and each open case has its own environment in the checkpoint. Preserve the private ZIP outside the checkout. Gradle's `clean` removes the entire `build` directory, including any restored QA worlds and captures there.
+For a specific regression, run `.\gradlew.bat lootStorageTest` or `.\gradlew.bat chestIntegrationTest`. For the Forge development sandbox, the Gradle tasks are `runClient` and `runServer`. Run `.\gradlew.bat genIntellijRuns` to generate IDE configurations and download the Minecraft assets. A cold setup encountered a transient download error on `icons/icon_32x32.png`. Retrying that same task completed. Development runs use `run/client` and `run/server` and exercise a different environment from the full RLCraft tests. Preserve the private ZIP outside the checkout. Gradle's `clean` removes the entire `build` directory, including any restored QA worlds and captures there.
 
 ## Configure a laptop RLCraft installation
+
+To rerun the separate seven-class native adapter checks, use the optional Gradle init script with an installed 2.9.3 profile. It prepares its own mapped test copies from the pack's published JARs. [Installed-class procedure and evidence](qa/INSTALLED_ADAPTERS.md)
 
 In CurseForge, install the specified 2.9.3 profile, launch it once through the normal Minecraft launcher with your own account, reach the menu and exit. Use **Open Folder** on that profile to obtain the folder containing `mods`, `manifest.json` and `minecraftinstance.json`. In CurseForge's Minecraft settings find the Minecraft modding folder. Its shared **Install** directory contains `versions`, `libraries` and `assets`. The connected-client scripts take these two directories separately and create their disposable profiles under `build/qa-client`.
 
@@ -69,7 +71,7 @@ For a persistent per-checkout setting, put a line such as `modpackDir=D:/Games/C
 
 ## Restore the private state and resume the stopped test
 
-1. On the laptop, keep the private ZIP outside the clone. From the project root, inspect its SHA-256 against the handoff report, verify each entry, then restore into the fresh clone. The restore helper rejects existing destination files. If Python is installed as `py -3`, substitute that for `python` throughout these guides.
+1. On the laptop, keep the private ZIP outside the clone. From the project root, compare its SHA-256 with the published handoff checksum, verify each entry, then restore into the fresh clone. The restore helper rejects existing destination files. If Python is installed as `py -3`, substitute that for `python` throughout these guides. [Private archive name, checksum and contents](qa/HANDOFF_STATE.md)
 
    ```powershell
    $state = (Resolve-Path -LiteralPath (Read-Host 'Private QA handoff ZIP')).Path

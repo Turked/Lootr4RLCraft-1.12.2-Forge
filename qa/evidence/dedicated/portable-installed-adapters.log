@@ -1,0 +1,14 @@
+Verified installed adapter vazkii.quark.decoration.tile.TileCustomChest with 27 slots
+Verified active actual Rustic barrel menus prevent conversion without materializing loot
+Verified installed adapter rustic.common.tileentity.TileEntityBarrel with 27 slots
+Verified installed adapter rustic.common.tileentity.TileEntityCabinet with 27 slots
+Verified installed adapter svenhjol.charm.crafting.tile.TileBarrel with 27 slots
+Verified installed adapter svenhjol.charm.crafting.tile.TileCrate with 9 slots
+Verified installed adapter svenhjol.charm.crafting.tile.TileBookshelfChest with 9 slots
+Verified installed adapter noppes.vc.blocks.tiles.TileBarrel with 54 slots
+Verified capture, seal and native-table replay for seven actual installed mod container classes
+Verified three independent 54-slot player inventories on vazkii.quark.decoration.tile.TileCustomChest
+Verified actual Quark spruce pairing and unlike-variant exclusion
+Verified three independent 54-slot player inventories on rustic.common.tileentity.TileEntityCabinet
+Verified actual Rustic cabinet pair reflection and 54 native slots
+BUILD SUCCESSFUL in 24s

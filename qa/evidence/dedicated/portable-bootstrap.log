@@ -1,0 +1,35 @@
+Initial online build in a new GRADLE_USER_HOME
+Caused by: java.lang.NullPointerException
+	at net.minecraftforge.fml.common.network.NetworkRegistry.newChannel(NetworkRegistry.java:161)
+BUILD FAILED in 1m 57s
+
+Same independent build directory after repairing the mapped Forge test harness
+> Task :reobfClientProbeJar
+> Task :reobfServerProbeJar
+> Task :chestIntegrationTest
+Verified both native player/container save orders, first-open rollback, legacy baselines and cursor recovery
+Verified minecart provenance gate, table and fixed sources, three private windows, movement, private NBT and record reload
+Verified 100/100 newly generated native bonus chests, seeded loot, two private menus and on-disk NBT round trips
+Verified 100 vanilla chest fixtures with three concurrent players, persisted legacy generic records, and native machine exclusion
+Verified generic native Mimic first-roll reuse, automation buffers, removed parts and duplicate completion protection
+Verified delayed Locks phases, unchanged physical loot, paired readiness, mutation refusal and saved enrollment recovery
+Verified generation across a 211 by 171 area, replaced tiles, cascading disk loads and ordinary storage exclusion
+Verified native world generation, conversion commands, chest menus, loot tables and saved player inventories
+> Task :lootStorageTest
+Verified save/reload and three-player isolation for 100 loot records
+Verified fixed inventory templates and legacy table records
+Verified private tile persistence, update-tag isolation and inert physical inventory
+Verified indicator packet round-trip and validation
+Verified packaged Minecraft 1.12 locale metadata and chest names
+Verified generated-mode persistence, capability adapters and native source isolation
+BUILD SUCCESSFUL in 33s
+
+Separate initial genIntellijRuns attempt
+> Failed to get asset: icons/icon_32x32.png
+BUILD FAILED in 1m 0s
+
+genIntellijRuns retry
+> Task :downloadAssets
+> Task :extractNatives
+> Task :genIntellijRuns
+BUILD SUCCESSFUL in 8s
