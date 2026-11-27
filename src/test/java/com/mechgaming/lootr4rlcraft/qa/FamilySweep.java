@@ -29,6 +29,7 @@ final class FamilySweep {
     private final int take;
     private String pass, step;
     private int index, age;
+    private int playerBooksBefore;
 
     FamilySweep(File markers, String name, int take) {
         this.markers = markers;
@@ -61,7 +62,7 @@ final class FamilySweep {
                 ? hit.entityHit instanceof EntityMinecartChest && Math.abs(hit.entityHit.posX - (x + 0.5)) < 1
                 : hit.typeOfHit == RayTraceResult.Type.BLOCK && pos.equals(hit.getBlockPos()));
         if (++age > 2400) throw new IllegalStateException("Timed out at " + pass + "/" + family + "/" + step
-                + " hit=" + hit + ", HUD=" + hud + ", menu=" + mc.currentScreen);
+                + ", pointing=" + pointing + ", HUD=" + hud);
         switch (step) {
             case "move":
                 double offset = (take - 2) * 1.3;
@@ -88,9 +89,15 @@ final class FamilySweep {
                 if (age < 20 || !(mc.player.openContainer instanceof ContainerChest)) break;
                 ContainerChest menu = (ContainerChest) mc.player.openContainer;
                 IInventory lower = menu.getLowerChestInventory();
+                String title = lower.getDisplayName().getUnformattedText();
+                int expectedSlots = expectedSlots(family);
                 int expected = initial ? 3 : 3 - take;
-                require(books(lower) == expected, pass + "/" + family + " expected " + expected + " books but got " + books(lower));
-                LOG.info("{} {} {} has {} private slots, {} books", name, family, pass, lower.getSizeInventory(), expected);
+                int actual = books(lower);
+                require("lootr".equals(title) && lower.getSizeInventory() == expectedSlots,
+                        "Expected menu 'lootr' with " + expectedSlots + " slots, got '" + title + "' with "
+                                + lower.getSizeInventory() + " slots, " + actual + " books");
+                require(actual == expected, "Expected " + expected + " private books, got " + actual);
+                LOG.info("{} {} {} has {} private slots, {} books, menu '{}'", name, family, pass, expectedSlots, actual, title);
                 if (initial) {
                     int source = 0;
                     while (source < lower.getSizeInventory() && lower.getStackInSlot(source).getItem() != Items.BOOK) source++;
@@ -99,6 +106,7 @@ final class FamilySweep {
                     int dest = lower.getSizeInventory();
                     while (dest < menu.inventorySlots.size() && menu.getSlot(dest).getHasStack()) dest++;
                     require(dest < menu.inventorySlots.size(), "No empty player slot");
+                    playerBooksBefore = books(mc.player.inventory);
                     mc.playerController.windowClick(menu.windowId, source, 0, ClickType.PICKUP, mc.player);
                     for (int i = 0; i < 3 - take; i++) mc.playerController.windowClick(menu.windowId, source, 1, ClickType.PICKUP, mc.player);
                     mc.playerController.windowClick(menu.windowId, dest, 0, ClickType.PICKUP, mc.player);
@@ -110,8 +118,14 @@ final class FamilySweep {
                 break;
             case "transfer":
                 if (age < 25) break;
+                require(mc.player.openContainer instanceof ContainerChest, "Private menu closed during transfer");
                 int remaining = books(((ContainerChest) mc.player.openContainer).getLowerChestInventory());
-                require(remaining == 3 - take, "Transfer did not update " + family);
+                int playerBooks = books(mc.player.inventory);
+                ItemStack cursor = mc.player.inventory.getItemStack();
+                require(remaining == 3 - take && playerBooks == playerBooksBefore + take && cursor.isEmpty(),
+                        "After taking " + take + " expected " + (3 - take) + " private books, "
+                                + (playerBooksBefore + take) + " player books and an empty cursor; got "
+                                + remaining + ", " + playerBooks + " and " + cursor);
                 mc.player.closeScreen();
                 enter("opened");
                 break;
@@ -141,8 +155,12 @@ final class FamilySweep {
 
     void failed(Minecraft mc, RuntimeException failure) throws IOException {
         String label = TYPES[index] + "-" + name + "-" + pass + "-failed";
-        LOG.error("Family check failed {} at {}", label, step, failure);
-        Files.write(new File(markers, label + ".txt").toPath(), failure.toString().getBytes(StandardCharsets.UTF_8));
+        BlockPos target = new BlockPos(88 + index * 4, 160, 72);
+        String details = failure + " at step=" + step + ", target=" + target + ", dimension=" + mc.player.dimension
+                + ", camera=" + mc.player.getPositionVector() + ", yaw=" + mc.player.rotationYaw
+                + ", pitch=" + mc.player.rotationPitch + ", hit=" + mc.objectMouseOver + ", screen=" + mc.currentScreen;
+        LOG.error("Family check failed {}: {}", label, details, failure);
+        Files.write(new File(markers, label + ".txt").toPath(), details.getBytes(StandardCharsets.UTF_8));
         if (mc.player.openContainer != mc.player.inventoryContainer) mc.player.closeScreen();
         index++;
         enter("move");
@@ -155,6 +173,20 @@ final class FamilySweep {
             if (stack.getItem() == Items.BOOK) count += stack.getCount();
         }
         return count;
+    }
+
+    private static int expectedSlots(String family) {
+        switch (family) {
+            case "double":
+            case "double-cabinet":
+            case "variedcommodities-barrel":
+                return 54;
+            case "charm-crate":
+            case "charm-bookshelf":
+                return 9;
+            default:
+                return 27;
+        }
     }
 
     private void enter(String next) { step = next; age = 0; }

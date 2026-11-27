@@ -29,6 +29,8 @@ $common = @{ Profile = $instance; Install = $runtime }
 
 Extract the private transfer ZIP at the project root before resuming the exact candidate. It restores the pinned product and client probe at the paths below. Its dedicated server probe belongs under `build/handoff-pinned/server/LootrServerProbe-0.2.0-dev.jar`. The saved world and old rendezvous files return to their previous `build/` locations. Newly staged client profiles can use the pinned artifacts without rebuilding them. For a fresh rebuild, record the newly built hashes and identify them as a different build.
 
+For the current desktop continuation, use the original pre-row world and the pinned product with freshly built client and server probes. Point `ProbeJar` at `build/qa-client/probe/LootrRenderProbe-0.2.0-dev.jar`, set `ExpectedProbe` to its actual SHA-256, and stage the matching newly built server probe. Confirm both halves of the Rustic cabinet share one managed identity and open a 54-slot private menu before proceeding. [Current checkpoint](../../../DEVELOPMENT_CHECKPOINT.md)
+
 ```powershell
 $common.CandidateJar = 'build/handoff-pinned/product/Lootr4RLCraft-0.2.0-dev.jar'
 $common.ProbeJar = 'build/handoff-pinned/client/LootrRenderProbe-0.2.0-dev.jar'
@@ -66,6 +68,8 @@ The server probe console command `lootrqa row` creates the row in a fresh test a
 .\qa\Run-MultiplayerProbe.ps1 @common -Phase Families
 ```
 
+Set `-LaunchIntervalSeconds` when staggering client startups. Its default is zero. The November 26 laptop retry used approximately 95 seconds between launches and connected all three clients.
+
 This phase first reopens the original diamond chest to check its persisted allocation, then covers the row. RenderTwo and RenderThree wait for RenderOne’s personal open on each container. Each checks its own unopened HUD, takes its assigned share of books, and observes its opened HUD. The probe revisits the row after a client chunk unload, a Nether round trip and reconnect. The reconnect pass checks private book counts through the actual menus.
 
 After recording the results, stop the dedicated test server cleanly using its console. Restart that same server with the same world and mod JAR. Keep its playerdata and private loot records together. Once it is ready, run the final verification.
@@ -75,6 +79,8 @@ After recording the results, stop the dedicated test server cleanly using its co
 ```
 
 The restart pass checks the previously opened state and private remainder in every row inventory. Every phase prints its private rendezvous directory under `build/qa-client/rendezvous`. Review each client's screenshots, logs and `*-failed.txt` evidence as well as its final `*-verified.txt`. The launcher's completion check covers all three client processes, completion files and failure markers. Full-frame inspection remains necessary to evaluate geometry and colors. Each of the three clients has a 2.7 GiB heap limit. Reserve memory for all three processes and the dedicated server.
+
+With Pillow 10.1 or newer, `tools/review_family_frames.py --families <RenderOne-profile> <RenderTwo-profile> <RenderThree-profile> --output <review-directory>` creates a contact sheet for each fixture and a CSV index. Pass `--restart` with the three restart profiles to include that phase. Partial runs still produce the sheets and index, with missing or unreadable frames marked and a nonzero exit status.
 
 ## Transfer contents
 

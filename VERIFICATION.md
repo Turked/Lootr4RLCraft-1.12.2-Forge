@@ -2,6 +2,8 @@
 
 This is a development candidate for Minecraft 1.12.2, Forge 14.23.5.2860 and Java 8. Each result below applies to the environment and artifact identified alongside it. A check against an installed class, a scripted server player and a connected game client exercise different paths.
 
+The November 26 connected-client retry preserved partial Families evidence. Two clients completed the initial and chunk-return capture sweeps. Three clients verified the existing diamond allocation. The saved double Rustic cabinet had only one managed tile and opened a 27-slot menu. Corrected fixture provisioning and the full three-client rendering, travel, reconnect and restart matrix remain unverified. [Desktop continuation checkpoint](DEVELOPMENT_CHECKPOINT.md)
+
 ## Evidence from the reported profile
 
 The inspected `RLCraft (1)` profile had `Lootr4RLCraft-0.1.0-dev.jar`, SHA-256 `89C93CAEF7B1B38978FFB7747392F20E6858F2884CBBD57AA35B47D9F087738F`. Its saved config enabled new registration, fixed inventories and indicators. A read-only scan of Test04 found 161 legacy managed chests, 93 ordinary chest tiles carrying a pending registration, 94 filled ordinary chests, 44 ordinary chests with native tables and 11 empty ordinary chests. All 12 chests in the recorded Tower-edit footprint carried pending registrations and Locks phase 1. A player looking at a pending chest could therefore see the original chest. That save establishes the state at save time. It cannot establish what happened during an earlier visit. See the repeatable [world-file reader](tools/audit_saved_chests.py).

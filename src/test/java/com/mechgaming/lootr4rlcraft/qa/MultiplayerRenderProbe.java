@@ -5,7 +5,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiDisconnected;
+import net.minecraft.client.gui.GuiDownloadTerrain;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.init.Items;
@@ -13,6 +16,7 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ScreenShotHelper;
 import net.minecraft.util.math.BlockPos;
@@ -38,6 +42,9 @@ public final class MultiplayerRenderProbe {
     private final FamilySweep families = Boolean.getBoolean("lootr.familySweep") ? new FamilySweep(directory, name, take) : null;
     private String afterSweep;
     private int ticks;
+    private long phaseStarted = System.nanoTime();
+    private NetworkManager connection;
+    private boolean retriedArrival;
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void hud(RenderGameOverlayEvent.Text event) { hud = String.join(" ", event.getLeft()); }
@@ -49,22 +56,50 @@ public final class MultiplayerRenderProbe {
         ticks++;
         try {
             if ("title".equals(phase)) {
-                if (mc.currentScreen != null && ticks > 40) {
+                int delay = retriedArrival && !completedTravel ? 100 + 100 * take : 40;
+                if (mc.currentScreen != null && ticks > delay) {
                     check(take > 0, "Unexpected QA player " + name);
+                    connection = null;
+                    hud = "";
                     mc.displayGuiScreen(new GuiConnecting(new GuiMainMenu(), mc, "127.0.0.1", 25583));
                     next("join");
                 }
                 return;
             }
-            if (ticks > 20 * 1200) throw new IllegalStateException("Timed out during " + phase);
+            if (mc.getConnection() != null) connection = mc.getConnection().getNetworkManager();
+            boolean arrival = "join".equals(phase) || "creative".equals(phase) || "approach".equals(phase);
+            if (mc.currentScreen instanceof GuiDisconnected || (connection != null && !connection.isChannelOpen())) {
+                String reason = connection == null || connection.getExitMessage() == null
+                        ? "see the client and server network logs" : connection.getExitMessage().getUnformattedText();
+                String detail = "Disconnected during " + phase + ": " + reason + ", " + describe(mc);
+                if (arrival && !completedTravel && !retriedArrival) {
+                    // No fixture interaction has been sent in this session. Keep the failed arrival as evidence.
+                    mark("arrival-retry", detail);
+                    retriedArrival = true;
+                    mc.loadWorld(null);
+                    mc.displayGuiScreen(new GuiMainMenu());
+                    next("title");
+                    return;
+                }
+                throw new IllegalStateException(detail);
+            }
+            if ((arrival && System.nanoTime() - phaseStarted > TimeUnit.MINUTES.toNanos(2)) || ticks > 20 * 1200) {
+                throw new IllegalStateException("Timed out during " + phase + ", " + describe(mc));
+            }
             if (mc.player == null || mc.world == null) return;
             RayTraceResult hit = mc.objectMouseOver;
             boolean targeting = hit != null && hit.typeOfHit == RayTraceResult.Type.BLOCK && CHEST.equals(hit.getBlockPos());
             switch (phase) {
                 case "join":
-                    if (ticks < 30) break;
+                    if (ticks < 30 || connection == null || mc.currentScreen instanceof GuiDownloadTerrain
+                            || mc.world.getChunkProvider().getLoadedChunk(mc.player.getPosition().getX() >> 4,
+                                    mc.player.getPosition().getZ() >> 4) == null) break;
                     mc.displayGuiScreen(null);
-                    mc.player.sendChatMessage("/gamemode creative " + name);
+                    if (!mc.player.capabilities.isCreativeMode) mc.player.sendChatMessage("/gamemode creative " + name);
+                    next("creative");
+                    break;
+                case "creative":
+                    if (!mc.player.capabilities.isCreativeMode) break;
                     returnToChest(mc);
                     next("approach");
                     break;
@@ -233,8 +268,12 @@ public final class MultiplayerRenderProbe {
     }
 
     private boolean everyone(String step) {
-        for (String other : NAMES) if (!new File(directory, other + "-" + step + ".txt").isFile()) return false;
-        return true;
+        boolean ready = true;
+        for (String other : NAMES) {
+            check(!new File(directory, other + "-failed.txt").isFile(), other + " failed before the " + step + " barrier");
+            if (!new File(directory, other + "-" + step + ".txt").isFile()) ready = false;
+        }
+        return ready;
     }
 
     private void capture(Minecraft mc, String stage) {
@@ -243,6 +282,16 @@ public final class MultiplayerRenderProbe {
                         mc.getFramebuffer()).getUnformattedText());
     }
 
-    private void next(String step) { phase = step; ticks = 0; }
+    private String describe(Minecraft mc) {
+        String screen = mc.currentScreen == null ? "in game" : mc.currentScreen.getClass().getSimpleName();
+        String player = mc.player == null ? "absent" : mc.player.getPositionVector() + " dim=" + mc.player.dimension
+                + " yaw=" + mc.player.rotationYaw + " pitch=" + mc.player.rotationPitch
+                + " creative=" + mc.player.capabilities.isCreativeMode + " tpPermission=" + mc.player.canUseCommand(2, "tp");
+        boolean chestChunkLoaded = mc.world != null && mc.world.getChunkProvider().getLoadedChunk(CHEST.getX() >> 4, CHEST.getZ() >> 4) != null;
+        return "screen=" + screen + ", player=" + player + ", diamond chest chunk loaded=" + chestChunkLoaded
+                + ", hit=" + mc.objectMouseOver + ", HUD=[" + hud + "]";
+    }
+
+    private void next(String step) { phase = step; ticks = 0; phaseStarted = System.nanoTime(); }
     private static void check(boolean valid, String message) { if (!valid) throw new IllegalStateException(message); }
 }

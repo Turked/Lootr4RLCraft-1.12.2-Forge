@@ -7,7 +7,8 @@ param(
     [string]$JavaPath,
     [string]$NativeDirectory,
     [string]$ExpectedCandidate,
-    [string]$ExpectedProbe
+    [string]$ExpectedProbe,
+    [ValidateRange(0,300)][int]$LaunchIntervalSeconds = 0
 )
 $ErrorActionPreference = 'Stop'
 $project = Split-Path -Parent $PSScriptRoot
@@ -29,6 +30,9 @@ if ($ExpectedCandidate) { $shared.ExpectedCandidate = $ExpectedCandidate }
 if ($ExpectedProbe) { $shared.ExpectedProbe = $ExpectedProbe }
 Write-Output "Rendezvous $meeting"
 $jobs = foreach ($name in @('RenderOne','RenderTwo','RenderThree')) {
+    if ($name -ne 'RenderOne' -and $LaunchIntervalSeconds -gt 0) {
+        Start-Sleep -Seconds $LaunchIntervalSeconds
+    }
     $parameters = $shared.Clone()
     $parameters.Player = $name
     Start-Job -Name "$runId-$name" -ArgumentList $entry,$parameters -ScriptBlock {
